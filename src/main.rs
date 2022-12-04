@@ -1,7 +1,8 @@
 use clap::Parser;
 use std::fs;
 
-pub mod day1;
+mod day1;
+mod day2;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -29,6 +30,7 @@ fn main() {
 
     let output: String = match &args.day {
         1 => day1::run(&data),
+        2 => day2::run(&data),
         _ => "".to_string(),
     };
 
