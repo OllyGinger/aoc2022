@@ -3,6 +3,7 @@ use std::fs;
 
 mod day1;
 mod day2;
+mod day3;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -31,6 +32,7 @@ fn main() {
     let output: String = match &args.day {
         1 => day1::run(&data),
         2 => day2::run(&data),
+        3 => day3::run(&data),
         _ => "".to_string(),
     };
 
