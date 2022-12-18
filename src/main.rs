@@ -29,6 +29,7 @@ fn main() {
         1 => solutions::day1::run(&data),
         2 => solutions::day2::run(&data),
         3 => solutions::day3::run(&data),
+        4 => solutions::day4::run(&data),
         _ => "".to_string(),
     };
 
