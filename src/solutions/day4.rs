@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 type Assignment = u32;
 type AssignmentRange = (Assignment, Assignment);
 type ElfPairAssignment = (AssignmentRange, AssignmentRange);
@@ -54,11 +52,6 @@ fn test_any_range_fully_overlaps_other() {
 }
 
 fn any_range_partially_overlaps_other(pair: ElfPairAssignment) -> bool {
-    // .23......  2-3
-    // ...45....  4-5
-
-    // ......789  7-9
-    // ....567..  5-7
     (pair.0 .0 == pair.1 .0 || pair.0 .1 == pair.1 .1)
         || (pair.0 .0 <= pair.1 .0 && pair.0 .1 >= pair.1 .0)
         || (pair.1 .0 <= pair.0 .0 && pair.1 .1 >= pair.0 .0)
