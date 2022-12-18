@@ -1,28 +1,24 @@
 use clap::Parser;
 use std::fs;
 
-mod day1;
-mod day2;
-mod day3;
+mod solutions;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long)]
     day: u16,
-
-    #[arg(short, long)]
-    input_path: String,
 }
 
 fn main() {
     let args: Args = Args::parse();
-    let data: String = match fs::read_to_string(&args.input_path) {
+    let path_to_data = format!("data/day{:02}.txt", args.day);
+    let data: String = match fs::read_to_string(&path_to_data) {
         Ok(v) => v,
         Err(e) => {
             eprint!(
                 "Error reading input file '{}': {}",
-                &args.input_path,
+                &path_to_data,
                 e.to_string()
             );
             std::process::exit(1);
@@ -30,9 +26,9 @@ fn main() {
     };
 
     let output: String = match &args.day {
-        1 => day1::run(&data),
-        2 => day2::run(&data),
-        3 => day3::run(&data),
+        1 => solutions::day1::run(&data),
+        2 => solutions::day2::run(&data),
+        3 => solutions::day3::run(&data),
         _ => "".to_string(),
     };
 
