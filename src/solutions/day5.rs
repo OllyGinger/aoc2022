@@ -1,8 +1,26 @@
-fn process(data: &String) -> String {
+fn process(data: &String, part2: bool) -> String {
+    let data = data.replace("\r", "");
     let (crates, orders) = data.split_once("\n\n").unwrap();
     let mut crates = process_crates(crates);
+    for line in orders.lines() {
+        let parts = line.split_whitespace().collect::<Vec<_>>();
+        let num_to_move = parts[1].parse::<usize>().unwrap();
+        let from = parts[3].parse::<usize>().unwrap() - 1;
+        let to = parts[5].parse::<usize>().unwrap() - 1;
 
-    return String::new();
+        let count = crates[from].len() - num_to_move..;
+        let mut working = crates[from].drain(count).collect::<Vec<_>>();
+        if !part2 {
+            working.reverse();
+        }
+        crates[to].extend(working);
+    }
+
+    crates
+        .into_iter()
+        .filter(|x| !x.is_empty())
+        .map(|mut x| x.pop().unwrap())
+        .collect()
 }
 
 fn process_crates(crates: &str) -> Vec<Vec<char>> {
@@ -29,9 +47,13 @@ move 1 from 2 to 1
 move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2"#;
-    process(&example.to_string());
+    assert_eq!(process(&example.to_string(), false), "CMZ".to_owned());
 }
 
 pub fn run(data: &String) -> String {
-    return format!("Rucksack priorities: \nPart 2 priorities:");
+    return format!(
+        "Top of each stack: '{}'\nPart 2: '{}'",
+        process(&data.to_string(), false),
+        process(&data.to_string(), true)
+    );
 }
