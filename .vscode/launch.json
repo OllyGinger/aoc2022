@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'aoc2022'",
+            "name": "Debug",
             "cargo": {
                 "args": [
                     "build",
@@ -27,7 +27,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'aoc2022'",
+            "name": "Unit Tests",
             "cargo": {
                 "args": [
                     "test",
@@ -40,7 +40,11 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "solutions::day8::test_example",
+                "--exact",
+                "--nocapture"
+            ],
             "cwd": "${workspaceFolder}"
         }
     ]
