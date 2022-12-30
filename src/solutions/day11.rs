@@ -33,12 +33,10 @@ impl Monkey {
     }
 
     // Return (New monkey, new value)
-    fn pick_new_monkey(
-        self: &mut Monkey,
-        item: u64,
-        part1: bool,
-        operand: u64,
-    ) -> (MonkeyIndex, u64) {
+    fn pick_new_monkey<R>(self: &mut Monkey, item: u64, reducer: R) -> (MonkeyIndex, u64)
+    where
+        R: Fn(u64) -> u64,
+    {
         let mut new_value = item;
         match self.op {
             Op::Add(n) => new_value += n,
@@ -47,12 +45,8 @@ impl Monkey {
             Op::MultiplyOld => new_value *= new_value,
         }
 
-        if part1 {
-            // Get bored
-            new_value /= 3;
-        } else {
-            new_value %= operand;
-        }
+        // Reduce
+        new_value = reducer(new_value);
 
         // Is divisible by
         let new_monkey;
@@ -161,12 +155,15 @@ fn process(data: &str, part1: bool) -> u64 {
         rounds = 10_000;
     }
 
-    let divisor: u64 = monkeys.iter().map(|x| x.test_divisible_by).product();
-
+    let divisor = monkeys.iter().map(|x| x.test_divisible_by).product::<u64>();
     for _ in 0..rounds {
         for m in 0..monkeys.len() {
             while let Some(item) = monkeys[m].item_worry.pop_front() {
-                let (new_monkey, new_value) = monkeys[m].pick_new_monkey(item, part1, divisor);
+                let (new_monkey, new_value) = if part1 {
+                    monkeys[m].pick_new_monkey(item, |x| x / 3)
+                } else {
+                    monkeys[m].pick_new_monkey(item, |x| x % divisor)
+                };
                 monkeys[new_monkey].add_worry(new_value);
             }
         }
