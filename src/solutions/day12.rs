@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashSet, VecDeque},
-    hash::Hash,
-};
+use std::collections::{HashSet, VecDeque};
 
 type Point = (usize, usize);
 
@@ -56,14 +53,20 @@ impl Grid {
             }
             println!("");
         }
+
+        println!("");
     }
 
     fn search_route(self: &Grid) -> Vec<Point> {
+        self.search_route_from(self.start)
+    }
+
+    fn search_route_from(self: &Grid, start: Point) -> Vec<Point> {
         let dirs: Vec<(isize, isize)> = vec![(0, 1), (1, 0), (-1, 0), (0, -1)];
         let mut q: VecDeque<Vec<Point>> = VecDeque::new();
         let mut seen: HashSet<Point> = HashSet::new();
 
-        q.push_back(vec![self.start]);
+        q.push_back(vec![start]);
         while q.len() > 0 {
             let current_routes = q.pop_front().unwrap();
             let row = (*current_routes.last().unwrap()).1;
@@ -95,13 +98,36 @@ impl Grid {
     }
 }
 
-fn process(data: &str) -> usize {
+fn process(data: &str) -> isize {
     let mut grid = Grid::new();
     grid.parse_grid(data);
 
     let route = grid.search_route();
     grid.draw_route(&route);
-    route.len() - 1
+    route.len() as isize - 1
+}
+
+fn process_best_start_pos(data: &str) -> isize {
+    let mut grid = Grid::new();
+    grid.parse_grid(data);
+
+    // Get a route for each 'a' height point
+    let mut shortest_route = Vec::new();
+    let mut shortest = usize::MAX;
+    for (y, row) in grid.heightmap.iter().enumerate() {
+        for (x, height) in row.iter().enumerate() {
+            if *height == 0 {
+                let route = grid.search_route_from((x, y));
+                if route.len() > 0 && route.len() < shortest {
+                    shortest_route = route;
+                    shortest = shortest_route.len();
+                }
+            }
+        }
+    }
+
+    grid.draw_route(&shortest_route);
+    shortest_route.len() as isize - 1
 }
 
 #[test]
@@ -113,8 +139,11 @@ acctuvwj
 abdefghi"#;
 
     assert_eq!(process(example), 31);
+    assert_eq!(process_best_start_pos(example), 29);
 }
 
 pub fn run(data: &str) -> String {
-    format!("Part 1: {}", process(data))
+    let part1 = process(data);
+    let part2 = process_best_start_pos(data);
+    format!("Part 1: {} - Part 2: {}", part1, part2)
 }
